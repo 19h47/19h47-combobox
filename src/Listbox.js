@@ -26,8 +26,9 @@ class Listbox extends EventEmitter {
 
 		this.hasFocus = false;
 		this.hasHover = false;
-		this.isOpen = 'block' === this.rootElement.style.display;
+		this.isOpen = this.rootElement.classList.contains('is-active');
 
+		// Bind.
 		this.handleMouseover = this.handleMouseover.bind(this);
 		this.handleMouseout = this.handleMouseout.bind(this);
 		this.close = this.close.bind(this);
@@ -175,7 +176,7 @@ class Listbox extends EventEmitter {
 
 	open() {
 		this.isOpen = true;
-		this.rootElement.style.setProperty('display', 'block');
+		this.rootElement.classList.add('is-active');
 
 		this.emit('Listbox.open');
 	}
@@ -185,7 +186,7 @@ class Listbox extends EventEmitter {
 			console.info('🚩 Listbox.close');
 
 			this.isOpen = false;
-			this.rootElement.style.display = 'none';
+			this.rootElement.classList.remove('is-active');
 
 			this.setCurrentOptionStyle(false);
 
