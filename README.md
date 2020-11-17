@@ -7,4 +7,6 @@
 | Option.mouseout  |           |             |
 | Option.mouseover |           |             |
 
-https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html
+## Acknowledgments
+
+-   [Editable Combobox With List Autocomplete Example](https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html)
