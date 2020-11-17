@@ -1,24 +1,495 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta http-equiv="X-UA-Compatible" content="ie=edge"/><title>Combobox Listbox</title><link rel="icon" type="image/png" href="check-box-with-check.png"/><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous"/><style>.list-group-item[aria-selected='true'] {
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Combobox Listbox</title>
+		<link rel="icon" type="image/png" href="check-box-with-check.png" />
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+			integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css"
+			integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ=="
+			crossorigin="anonymous"
+		/>
+
+		<style>
+			.list-group-item[aria-selected='true'] {
 				color: #495057;
 				text-decoration: none;
 				background-color: #f8f9fa;
-			}</style></head><body><div class="container"><div class="row my-5"><div class="col-12"><h1 class="m-0"><a href="https://github.com/19h47/19h47-combobox">Combobox</a></h1></div></div><div class="row"><div class="col-12"><label for="input">State</label><div class="js-combobox"><div class="input-group my-3"><input id="input" class="form-control" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="listbox" aria-haspopup="true"/><div class="input-group-append"><button class="btn btn-secondary dropdown-toggle js-button" type="button" aria-label="Open">Open</button></div></div><ul id="listbox" class="list-group" role="listbox" aria-label="States" style="display: none" tabindex="-1"><li class="list-group-item list-group-item-action" id="lb1-al" role="option">Alabama</li><li class="list-group-item list-group-item-action" id="lb1-ak" role="option">Alaska</li><li class="list-group-item list-group-item-action" id="lb1-as" role="option">American Samoa</li><li class="list-group-item list-group-item-action" id="lb1-az" role="option">Arizona</li><li class="list-group-item list-group-item-action" id="lb1-ar" role="option">Arkansas</li><li class="list-group-item list-group-item-action" id="lb1-ca" role="option">California</li><li class="list-group-item list-group-item-action" id="lb1-co" role="option">Colorado</li><li class="list-group-item list-group-item-action" id="lb1-ct" role="option">Connecticut</li><li class="list-group-item list-group-item-action" id="lb1-de" role="option">Delaware</li><li class="list-group-item list-group-item-action" id="lb1-dc" role="option">District of Columbia</li><li class="list-group-item list-group-item-action" id="lb1-fl" role="option">Florida</li><li class="list-group-item list-group-item-action" id="lb1-ga" role="option">Georgia</li><li class="list-group-item list-group-item-action" id="lb1-gm" role="option">Guam</li><li class="list-group-item list-group-item-action" id="lb1-hi" role="option">Hawaii</li><li class="list-group-item list-group-item-action" id="lb1-id" role="option">Idaho</li><li class="list-group-item list-group-item-action" id="lb1-il" role="option">Illinois</li><li class="list-group-item list-group-item-action" id="lb1-in" role="option">Indiana</li><li class="list-group-item list-group-item-action" id="lb1-ia" role="option">Iowa</li><li class="list-group-item list-group-item-action" id="lb1-ks" role="option">Kansas</li><li class="list-group-item list-group-item-action" id="lb1-ky" role="option">Kentucky</li><li class="list-group-item list-group-item-action" id="lb1-la" role="option">Louisiana</li><li class="list-group-item list-group-item-action" id="lb1-me" role="option">Maine</li><li class="list-group-item list-group-item-action" id="lb1-md" role="option">Maryland</li><li class="list-group-item list-group-item-action" id="lb1-ma" role="option">Massachusetts</li><li class="list-group-item list-group-item-action" id="lb1-mi" role="option">Michigan</li><li class="list-group-item list-group-item-action" id="lb1-mn" role="option">Minnesota</li><li class="list-group-item list-group-item-action" id="lb1-ms" role="option">Mississippi</li><li class="list-group-item list-group-item-action" id="lb1-mo" role="option">Missouri</li><li class="list-group-item list-group-item-action" id="lb1-mt" role="option">Montana</li><li class="list-group-item list-group-item-action" id="lb1-ne" role="option">Nebraska</li><li class="list-group-item list-group-item-action" id="lb1-nv" role="option">Nevada</li><li class="list-group-item list-group-item-action" id="lb1-nh" role="option">New Hampshire</li><li class="list-group-item list-group-item-action" id="lb1-nj" role="option">New Jersey</li><li class="list-group-item list-group-item-action" id="lb1-nm" role="option">New Mexico</li><li class="list-group-item list-group-item-action" id="lb1-ny" role="option">New York</li><li class="list-group-item list-group-item-action" id="lb1-nc" role="option">North Carolina</li><li class="list-group-item list-group-item-action" id="lb1-nd" role="option">North Dakota</li><li class="list-group-item list-group-item-action" id="lb1-mp" role="option">Northern Marianas Islands</li><li class="list-group-item list-group-item-action" id="lb1-oh" role="option">Ohio</li><li class="list-group-item list-group-item-action" id="lb1-ok" role="option">Oklahoma</li><li class="list-group-item list-group-item-action" id="lb1-or" role="option">Oregon</li><li class="list-group-item list-group-item-action" id="lb1-pa" role="option">Pennsylvania</li><li class="list-group-item list-group-item-action" id="lb1-pr" role="option">Puerto Rico</li><li class="list-group-item list-group-item-action" id="lb1-ri" role="option">Rhode Island</li><li class="list-group-item list-group-item-action" id="lb1-sc" role="option">South Carolina</li><li class="list-group-item list-group-item-action" id="lb1-sd" role="option">South Dakota</li><li class="list-group-item list-group-item-action" id="lb1-tn" role="option">Tennessee</li><li class="list-group-item list-group-item-action" id="lb1-tx" role="option">Texas</li><li class="list-group-item list-group-item-action" id="lb1-ut" role="option">Utah</li><li class="list-group-item list-group-item-action" id="lb1-ve" role="option">Vermont</li><li class="list-group-item list-group-item-action" id="lb1-va" role="option">Virginia</li><li class="list-group-item list-group-item-action" id="lb1-vi" role="option">Virgin Islands</li><li class="list-group-item list-group-item-action" id="lb1-wa" role="option">Washington</li><li class="list-group-item list-group-item-action" id="lb1-wv" role="option">West Virginia</li><li class="list-group-item list-group-item-action" id="lb1-wi" role="option">Wisconsin</li><li class="list-group-item list-group-item-action" id="lb1-wy" role="option">Wyoming</li></ul></div></div></div></div><script src="main.js"></script><script>window.addEventListener('load', () => {
-				const comboboxes = [...document.querySelectorAll('.js-combobox')];
+			}
+		</style>
+	</head>
 
-				comboboxes.forEach($combobox => {
-					const $button = $combobox.querySelector('.js-button');
-					var combobox = new Combobox.default($combobox);
+	<body>
+		<div class="container">
+			<div class="row my-5">
+				<div class="col-12">
+					<h1 class="m-0">
+						<a href="https://github.com/19h47/19h47-combobox">Combobox</a>
+					</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="border p-3">
+						<label class="h3 mb-3 d-block" for="combobox"> State </label>
 
-					combobox.init();
+						<div class="input-group mt-3">
+							<input
+								id="combobox"
+								class="form-control"
+								type="text"
+								role="combobox"
+								aria-autocomplete="list"
+								aria-expanded="false"
+								aria-controls="listbox"
+								aria-haspopup="true"
+							/>
+							<div class="input-group-append">
+								<button
+									class="btn btn-secondary dropdown-toggle js-button"
+									type="button"
+									aria-label="Open"
+								>
+									Open
+								</button>
+							</div>
+						</div>
 
-					$button.addEventListener('click', () => {
-						if (combobox.listbox.isOpen()) {
-							combobox.listbox.close(true);
-						} else {
-							combobox.listbox.open();
-						}
-						combobox.rootElement.focus();
-						combobox.setVisualFocusTextbox();
-					});
+						<ul
+							id="listbox"
+							class="list-group mt-3"
+							role="listbox"
+							aria-label="States"
+							style="display: none"
+							tabindex="-1"
+						>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-al"
+								role="option"
+							>
+								Alabama
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ak"
+								role="option"
+							>
+								Alaska
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-as"
+								role="option"
+							>
+								American Samoa
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-az"
+								role="option"
+							>
+								Arizona
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ar"
+								role="option"
+							>
+								Arkansas
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ca"
+								role="option"
+							>
+								California
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-co"
+								role="option"
+							>
+								Colorado
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ct"
+								role="option"
+							>
+								Connecticut
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-de"
+								role="option"
+							>
+								Delaware
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-dc"
+								role="option"
+							>
+								District of Columbia
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-fl"
+								role="option"
+							>
+								Florida
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ga"
+								role="option"
+							>
+								Georgia
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-gm"
+								role="option"
+							>
+								Guam
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-hi"
+								role="option"
+							>
+								Hawaii
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-id"
+								role="option"
+							>
+								Idaho
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-il"
+								role="option"
+							>
+								Illinois
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-in"
+								role="option"
+							>
+								Indiana
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ia"
+								role="option"
+							>
+								Iowa
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ks"
+								role="option"
+							>
+								Kansas
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ky"
+								role="option"
+							>
+								Kentucky
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-la"
+								role="option"
+							>
+								Louisiana
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-me"
+								role="option"
+							>
+								Maine
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-md"
+								role="option"
+							>
+								Maryland
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ma"
+								role="option"
+							>
+								Massachusetts
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-mi"
+								role="option"
+							>
+								Michigan
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-mn"
+								role="option"
+							>
+								Minnesota
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ms"
+								role="option"
+							>
+								Mississippi
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-mo"
+								role="option"
+							>
+								Missouri
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-mt"
+								role="option"
+							>
+								Montana
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ne"
+								role="option"
+							>
+								Nebraska
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-nv"
+								role="option"
+							>
+								Nevada
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-nh"
+								role="option"
+							>
+								New Hampshire
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-nj"
+								role="option"
+							>
+								New Jersey
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-nm"
+								role="option"
+							>
+								New Mexico
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ny"
+								role="option"
+							>
+								New York
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-nc"
+								role="option"
+							>
+								North Carolina
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-nd"
+								role="option"
+							>
+								North Dakota
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-mp"
+								role="option"
+							>
+								Northern Marianas Islands
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-oh"
+								role="option"
+							>
+								Ohio
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ok"
+								role="option"
+							>
+								Oklahoma
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-or"
+								role="option"
+							>
+								Oregon
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-pa"
+								role="option"
+							>
+								Pennsylvania
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-pr"
+								role="option"
+							>
+								Puerto Rico
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ri"
+								role="option"
+							>
+								Rhode Island
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-sc"
+								role="option"
+							>
+								South Carolina
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-sd"
+								role="option"
+							>
+								South Dakota
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-tn"
+								role="option"
+							>
+								Tennessee
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-tx"
+								role="option"
+							>
+								Texas
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ut"
+								role="option"
+							>
+								Utah
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-ve"
+								role="option"
+							>
+								Vermont
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-va"
+								role="option"
+							>
+								Virginia
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-vi"
+								role="option"
+							>
+								Virgin Islands
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-wa"
+								role="option"
+							>
+								Washington
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-wv"
+								role="option"
+							>
+								West Virginia
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-wi"
+								role="option"
+							>
+								Wisconsin
+							</li>
+							<li
+								class="list-group-item list-group-item-action"
+								id="lb1-wy"
+								role="option"
+							>
+								Wyoming
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="main.js"></script>
+		<script>
+			window.addEventListener('load', () => {
+				const $combobox = document.querySelector('[role="combobox"]');
+				const $button = document.querySelector('.js-button');
+				const $listbox = document.querySelector('[role="listbox"]');
+
+				const combobox = new Combobox.default($combobox, $listbox);
+				combobox.init();
+
+				$button.addEventListener('click', () => {
+					if (combobox.listbox.isOpen) {
+						combobox.listbox.close(true);
+					} else {
+						combobox.listbox.open();
+					}
+					combobox.rootElement.focus();
+					combobox.setVisualFocusTextbox();
 				});
-			});</script></body></html>
+			});
+		</script>
+	</body>
+</html>

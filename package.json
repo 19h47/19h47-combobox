@@ -1,7 +1,7 @@
 {
-	"name": "@19h47/checkbox",
-	"version": "4.1.0",
-	"description": "Custom checkbox element with accessibility in mind",
+	"name": "@19h47/combobox",
+	"version": "0.0.1",
+	"description": "Combobox and Listbox",
 	"main": "dist/main.js",
 	"scripts": {
 		"prod": "webpack --mode=production --config webpack/webpack.config.js",
@@ -11,35 +11,35 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/19h47/19h47-checkbox.git"
+		"url": "git://github.com/19h47/19h47-combobox.git"
 	},
 	"keywords": [
-		"checkbox",
+		"combobox",
+		"listbox",
 		"ES6"
 	],
 	"author": "Jérémy Levron <jeremylevron@19h47.fr> (https://19h47.fr)",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/19h47/19h47-checkbox/issues"
+		"url": "https://github.com/19h47/19h47-combobox/issues"
 	},
-	"homepage": "https://github.com/19h47/19h47-checkbox#readme",
+	"homepage": "https://github.com/19h47/19h47-combobox#readme",
 	"devDependencies": {
 		"@19h47/prettier-config": "^1.0.0",
 		"@babel/core": "^7.12.3",
 		"@babel/eslint-plugin": "^7.12.1",
-		"@babel/plugin-transform-runtime": "^7.12.1",
 		"@babel/plugin-proposal-class-properties": "^7.12.1",
+		"@babel/plugin-transform-runtime": "^7.12.1",
 		"@babel/preset-env": "^7.12.1",
 		"@babel/runtime": "^7.12.1",
 		"babel-eslint": "^10.1.0",
 		"babel-loader": "^8.0.6",
 		"clean-webpack-plugin": "^3.0.0",
-		"clear": "^0.1.0",
 		"copy-webpack-plugin": "^6.2.1",
 		"eslint": "^7.11.0",
 		"eslint-config-airbnb-base": "^14.2.0",
 		"eslint-config-prettier": "^6.14.0",
-		"eslint-config-standard": "^15.0.0",
+		"eslint-config-standard": "^16.0.1",
 		"eslint-import-resolver-webpack": "^0.13.0",
 		"eslint-loader": "^4.0.2",
 		"eslint-plugin-import": "^2.22.1",
@@ -47,10 +47,9 @@
 		"eslint-plugin-promise": "^4.2.1",
 		"eslint-plugin-standard": "^4.0.2",
 		"html-webpack-plugin": "^4.5.0",
-		"ora": "^5.1.0",
 		"prettier": "^2.1.2",
-		"webpack": "^4.44.2",
-		"webpack-cli": "^3.3.12",
+		"webpack": "4.44.2",
+		"webpack-cli": "3.3.12",
 		"webpack-dev-server": "^3.10.1",
 		"webpack-format-messages": "^2.0.6",
 		"webpack-merge": "^5.2.0",

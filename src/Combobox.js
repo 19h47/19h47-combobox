@@ -3,7 +3,7 @@ import {
 	BACKSPACE,
 	TAB,
 	ENTER,
-	ESC,
+	ESCAPE,
 	END,
 	HOME,
 	ARROW_LEFT,
@@ -15,9 +15,14 @@ import {
 const isPrintableCharacter = string => 1 === string.length && string.match(/\S/);
 
 class Combobox {
-	constructor(domNode) {
-		this.rootElement = domNode.querySelector('input');
-		this.listbox = false;
+	/**
+	 *
+	 * @param {Object} $combobox
+	 * @param {*} $listbox
+	 */
+	constructor($combobox, $listbox) {
+		this.rootElement = $combobox;
+		this.$listbox = $listbox;
 		this.option = false;
 
 		this.hasFocus = false;
@@ -32,7 +37,6 @@ class Combobox {
 		this.rootElement.setAttribute('aria-haspopup', true);
 
 		let autocomplete = this.rootElement.getAttribute('aria-autocomplete');
-		const $listbox = document.getElementById(this.rootElement.getAttribute('aria-controls'));
 
 		if ('string' === typeof autocomplete) {
 			autocomplete = autocomplete.toLowerCase();
@@ -44,7 +48,7 @@ class Combobox {
 			this.isNone = true;
 		}
 
-		this.listbox = new Listbox($listbox, this);
+		this.listbox = new Listbox(this.$listbox, this);
 		this.listbox.init();
 
 		this.initEvents();
@@ -54,74 +58,22 @@ class Combobox {
 		this.rootElement.addEventListener('keydown', this.handleKeydown.bind(this));
 		this.rootElement.addEventListener('keyup', this.handleKeyup.bind(this));
 		this.rootElement.addEventListener('click', this.handleClick.bind(this));
-		this.rootElement.addEventListener('focus', this.handleFocus.bind(this));
+		this.rootElement.addEventListener('is-focus', this.handleFocus.bind(this));
 		this.rootElement.addEventListener('blur', this.handleBlur.bind(this));
-	}
 
-	setActiveDescendant(option) {
-		this.rootElement.setAttribute('aria-activedescendant', '');
+		this.listbox.on('Listbox.setoption', ({ option }) => {
+			this.setOption(option);
+			this.setValue(option.textContent);
+		});
 
-		if (option && this.listbox.focus) {
-			this.rootElement.setAttribute('aria-activedescendant', option.rootElement.id);
-		}
-	}
+		this.listbox.on('Listbox.open', () => {
+			this.rootElement.setAttribute('aria-expanded', true);
+		});
 
-	setValue(value) {
-		this.filter = value;
-		this.rootElement.value = this.filter;
-		this.rootElement.setSelectionRange(this.filter.length, this.filter.length);
-
-		if (this.isList || this.isBoth) {
-			this.listbox.filterOptions(this.filter, this.option);
-		}
-	}
-
-	setOption(option, flag = false) {
-		if (option) {
-			this.option = option;
-			this.listbox.setCurrentOptionStyle(this.option);
-			this.setActiveDescendant(this.option);
-
-			if (this.isBoth) {
-				this.rootElement.value = this.option.textContent;
-				if (flag) {
-					this.rootElement.setSelectionRange(
-						this.option.textContent.length,
-						this.option.textContent.length,
-					);
-				} else {
-					this.rootElement.setSelectionRange(
-						this.filter.length,
-						this.option.textContent.length,
-					);
-				}
-			}
-		}
-	}
-
-	setVisualFocusTextbox() {
-		this.listbox.rootElement.classList.remove('focus');
-		this.listbox.focus = false;
-		this.rootElement.parentNode.classList.add('focus'); // set the focus class to the parent for easier styling
-		this.hasFocus = true;
-		this.setActiveDescendant(false);
-	}
-
-	setVisualFocusListbox() {
-		this.rootElement.parentNode.classList.remove('focus');
-		this.hasFocus = false;
-		this.listbox.rootElement.classList.add('focus');
-		this.listbox.focus = true;
-		this.setActiveDescendant(this.option);
-	}
-
-	removeVisualFocusAll() {
-		this.rootElement.parentNode.classList.remove('focus');
-		this.hasFocus = false;
-		this.listbox.rootElement.classList.remove('focus');
-		this.listbox.focus = true;
-		this.option = false;
-		this.setActiveDescendant(false);
+		this.listbox.on('Listbox.close', () => {
+			this.rootElement.setAttribute('aria-expanded', false);
+			this.setActiveDescendant();
+		});
 	}
 
 	handleKeydown(event) {
@@ -141,11 +93,11 @@ class Combobox {
 			[ARROW_DOWN]: () => {
 				if (this.listbox.options.length) {
 					if (this.listbox.focus || (this.isBoth && this.option)) {
-						this.setOption(this.listbox.getNextItem(this.option), true);
+						this.setOption(this.listbox.getNextItem(this.option));
 					} else {
 						this.listbox.open();
 						if (!altKey) {
-							this.setOption(this.listbox.getFirstItem(), true);
+							this.setOption(this.listbox.getFirstItem());
 						}
 					}
 					this.setVisualFocusListbox();
@@ -157,11 +109,11 @@ class Combobox {
 			[ARROW_UP]: () => {
 				if (this.listbox.options.length) {
 					if (this.listbox.focus || (this.isBoth && this.option)) {
-						this.setOption(this.listbox.getPreviousItem(this.option), true);
+						this.setOption(this.listbox.getPreviousItem(this.option));
 					} else {
 						this.listbox.open();
 						if (!altKey) {
-							this.setOption(this.listbox.getLastItem(), true);
+							this.setOption(this.listbox.getLastItem());
 						}
 					}
 					this.setVisualFocusListbox();
@@ -170,7 +122,7 @@ class Combobox {
 				event.stopPropagation();
 				event.preventDefault();
 			},
-			[ESC]: () => {
+			[ESCAPE]: () => {
 				this.listbox.close(true);
 				this.setVisualFocusTextbox();
 				this.setValue('');
@@ -192,7 +144,6 @@ class Combobox {
 	}
 
 	handleKeyup(event) {
-		let flag = false;
 		let option = false;
 
 		const { keyCode, key } = event;
@@ -201,26 +152,24 @@ class Combobox {
 			this.filter += key;
 		}
 
-		// console.log({ keyCode, key, filter: this.filter });
-
 		// this is for the case when a selection in the textbox has been deleted
 		if (this.rootElement.value.length < this.filter.length) {
 			this.filter = this.rootElement.value;
 			this.option = false;
 		}
 
-		if (keyCode === ESC) {
-			return;
-		}
-
 		switch (keyCode) {
+			case ESCAPE:
+				return;
 			case BACKSPACE:
 				this.setValue(this.rootElement.value);
 				this.setVisualFocusTextbox();
 
 				this.listbox.setCurrentOptionStyle(false);
 				this.option = false;
-				flag = true;
+
+				event.stopPropagation();
+				event.preventDefault();
 
 				break;
 
@@ -236,20 +185,23 @@ class Combobox {
 				}
 
 				this.setVisualFocusTextbox();
-				flag = true;
+				event.stopPropagation();
+				event.preventDefault();
 				break;
 
 			default:
 				if (isPrintableCharacter(key)) {
 					this.setVisualFocusTextbox();
 					this.listbox.setCurrentOptionStyle(false);
-					flag = true;
+
+					event.stopPropagation();
+					event.preventDefault();
 
 					if (this.isList || this.isBoth) {
 						option = this.listbox.filterOptions(this.filter, this.option);
 
 						if (option) {
-							if (this.listbox.isClosed() && this.rootElement.value.length) {
+							if (!this.listbox.isOpen && this.rootElement.value.length) {
 								this.listbox.open();
 							}
 
@@ -271,7 +223,7 @@ class Combobox {
 						} else {
 							this.listbox.close();
 							this.option = false;
-							this.setActiveDescendant(false);
+							this.setActiveDescendant();
 						}
 					} else if (this.rootElement.value.length) {
 						this.listbox.open();
@@ -281,53 +233,46 @@ class Combobox {
 				break;
 		}
 
-		// if (keyCode !== RETURN) {
+		if (keyCode !== ENTER) {
+			if (this.isList || this.isBoth) {
+				option = this.listbox.filterOptions(this.filter, this.option);
 
-		//   if (this.isList || this.isBoth) {
-		//     option = this.listbox.filterOptions(this.filter, this.option);
-		//     if (option) {
-		//       if (this.listbox.isClosed() && this.rootElement.value.length) {
-		//         this.listbox.open();
-		//       }
+				if (option) {
+					if (!this.listbox.isOpen && this.rootElement.value.length) {
+						this.listbox.open();
+					}
 
-		//       if (option.textComparison.indexOf(this.rootElement.value.toLowerCase()) === 0) {
-		//         this.option = option;
-		//         if (this.isBoth || this.listbox.focus) {
-		//           this.listbox.setCurrentOptionStyle(option);
-		//           if (this.isBoth && isPrintableCharacter(char)) {
-		//             this.setOption(option);
-		//           }
-		//         }
-		//       }
-		//       else {
-		//         this.option = false;
-		//         this.listbox.setCurrentOptionStyle(false);
-		//       }
-		//     }
-		//     else {
-		//       this.listbox.close();
-		//       this.option = false;
-		//       this.setActiveDescendant(false);
-		//     }
-		//   }
-		//   else if (this.rootElement.value.length) {
-		//     this.listbox.open();
-		//   }
+					if (0 === option.textComparison.indexOf(this.rootElement.value.toLowerCase())) {
+						this.option = option;
 
-		// }
+						if (this.isBoth || this.listbox.focus) {
+							this.listbox.setCurrentOptionStyle(option);
 
-		if (flag) {
-			event.stopPropagation();
-			event.preventDefault();
+							if (this.isBoth && isPrintableCharacter(key)) {
+								this.setOption(option);
+							}
+						}
+					} else {
+						this.option = false;
+						this.listbox.setCurrentOptionStyle(false);
+					}
+				} else {
+					this.listbox.close();
+					this.option = false;
+					this.setActiveDescendant();
+				}
+			} else if (this.rootElement.value.length) {
+				this.listbox.open();
+			}
 		}
 	}
 
 	handleClick() {
-		if (this.listbox.isOpen()) {
-			this.listbox.close(true);
-		} else {
-			this.listbox.open();
+		if (this.listbox.isOpen) {
+			return this.listbox.close(true);
 		}
+
+		return this.listbox.open();
 	}
 
 	handleFocus() {
@@ -341,6 +286,59 @@ class Combobox {
 		this.listbox.setCurrentOptionStyle(null);
 		this.removeVisualFocusAll();
 		setTimeout(this.listbox.close.bind(this.listbox, false), 300);
+	}
+
+	setActiveDescendant(option = false) {
+		this.rootElement.removeAttribute('aria-activedescendant');
+
+		if (option && this.listbox.focus) {
+			this.rootElement.setAttribute('aria-activedescendant', option.rootElement.id);
+		}
+	}
+
+	setValue(value) {
+		this.filter = value;
+		this.rootElement.value = this.filter;
+
+		if (this.isList || this.isBoth) {
+			this.listbox.filterOptions(this.filter, this.option);
+		}
+	}
+
+	setOption(option) {
+		this.option = option;
+		this.listbox.setCurrentOptionStyle(this.option);
+		this.setActiveDescendant(this.option);
+
+		if (this.isBoth) {
+			this.rootElement.value = this.option.textContent;
+		}
+	}
+
+	setVisualFocusTextbox() {
+		this.listbox.rootElement.classList.remove('is-focus');
+		this.listbox.focus = false;
+		this.rootElement.parentNode.classList.add('is-focus');
+		this.hasFocus = true;
+		this.setActiveDescendant();
+	}
+
+	setVisualFocusListbox() {
+		this.rootElement.parentNode.classList.remove('is-focus');
+		this.hasFocus = false;
+		this.listbox.rootElement.classList.add('is-focus');
+		this.listbox.focus = true;
+
+		this.setActiveDescendant(this.option);
+	}
+
+	removeVisualFocusAll() {
+		this.rootElement.parentNode.classList.remove('is-focus');
+		this.hasFocus = false;
+		this.listbox.rootElement.classList.remove('is-focus');
+		this.listbox.focus = true;
+		this.option = false;
+		this.setActiveDescendant();
 	}
 }
 

@@ -1,57 +1,65 @@
 import Option from '@/Option';
-// import { EventEmitter } from 'events';
-// /* eslint-disable */
+import { EventEmitter } from 'events';
+
 /*
  * Listbox
  *
  */
-class Listbox {
+class Listbox extends EventEmitter {
+	/**
+	 *
+	 * @param {Object} element
+	 * @param {Object} comboboxObj
+	 */
 	constructor(element, comboboxObj) {
+		super();
+
 		this.rootElement = element;
 		this.combobox = comboboxObj;
 
 		this.allOptions = [];
 
-		this.options = []; // see PopupMenu init method
+		this.options = [];
 
-		this.firstOption = null; // see PopupMenu init method
-		this.lastOption = null; // see PopupMenu init method
+		this.firstOption = null;
+		this.lastOption = null;
 
-		this.hasFocus = false; // see MenuItem handleFocus, handleBlur
-		this.hasHover = false; // see PopupMenu handleMouseover, handleMouseout
+		this.hasFocus = false;
+		this.hasHover = false;
+		this.isOpen = 'block' === this.rootElement.style.display;
 
 		this.handleMouseover = this.handleMouseover.bind(this);
 		this.handleMouseout = this.handleMouseout.bind(this);
+		this.close = this.close.bind(this);
 	}
 
 	init() {
-		this.rootElement.tabIndex = -1;
-
-		this.rootElement.setAttribute('role', 'listbox');
-
 		const options = [...this.rootElement.querySelectorAll('[role="option"]')];
 
 		options.forEach($option => {
-			if (!$option.firstElementChild && 'separator' !== $option.getAttribute('role')) {
-				const option = new Option($option, this);
-				option.init();
-				this.allOptions.push(option);
-
-				option.on('Option.mouseout', () => {
-					this.hasHover = false;
-					setTimeout(() => this.close(false), 300);
-				});
-
-				option.on('Option.mouseover', () => {
-					this.hasHover = true;
-					this.open();
-				});
-
-				option.on('Option.click', ({ option: element }) => {
-					this.setOption(element);
-					this.close(true);
-				});
+			if ($option.firstElementChild && 'separator' === $option.getAttribute('role')) {
+				return;
 			}
+
+			const option = new Option($option, this);
+			option.init();
+
+			this.allOptions.push(option);
+
+			option.on('Option.mouseout', () => {
+				this.hasHover = false;
+				setTimeout(() => this.close(false), 300);
+			});
+
+			option.on('Option.mouseover', () => {
+				this.hasHover = true;
+				this.open();
+			});
+
+			option.on('Option.click', ({ option: element }) => {
+				this.setOption(element);
+				this.close(true);
+			});
 		});
 
 		this.filterOptions('');
@@ -86,6 +94,7 @@ class Listbox {
 
 		// Use populated.options array to initialize firstOption and lastOption.
 		numItems = this.options.length;
+
 		if (0 < numItems) {
 			[this.firstOption] = this.options;
 			this.lastOption = this.options[numItems - 1];
@@ -107,7 +116,7 @@ class Listbox {
 	setCurrentOptionStyle(option) {
 		this.options.forEach($option => {
 			if ($option === option) {
-				$option.rootElement.setAttribute('aria-selected', 'true');
+				$option.rootElement.setAttribute('aria-selected', true);
 				this.rootElement.scrollTop = $option.rootElement.offsetTop;
 			} else {
 				$option.rootElement.removeAttribute('aria-selected');
@@ -116,13 +125,12 @@ class Listbox {
 	}
 
 	setOption(option) {
+		console.info('🚩 Listbox.setoption');
+
 		if (option) {
-			this.combobox.setOption(option);
-			this.combobox.setValue(option.textContent);
+			this.emit('Listbox.setoption', { option });
 		}
 	}
-
-	/* EVENT HANDLERS */
 
 	handleMouseover() {
 		this.hasHover = true;
@@ -130,10 +138,8 @@ class Listbox {
 
 	handleMouseout() {
 		this.hasHover = false;
-		setTimeout(this.close.bind(this, false), 300);
+		setTimeout(() => this.close(false), 300);
 	}
-
-	/* FOCUS MANAGEMENT METHODS */
 
 	getFirstItem() {
 		return this.firstOption;
@@ -167,32 +173,34 @@ class Listbox {
 		return this.firstOption;
 	}
 
-	/* MENU DISPLAY METHODS */
-
-	isOpen() {
-		return 'block' === this.rootElement.style.display;
-	}
-
-	isClosed() {
-		return 'block' !== this.rootElement.style.display;
-	}
-
-	hasOptions() {
-		return this.options.length;
-	}
-
 	open() {
+		this.isOpen = true;
 		this.rootElement.style.setProperty('display', 'block');
-		this.combobox.rootElement.setAttribute('aria-expanded', true);
+
+		this.emit('Listbox.open');
 	}
 
 	close(force = false) {
 		if (force || (!this.hasFocus && !this.hasHover && !this.combobox.hasHover)) {
-			this.setCurrentOptionStyle(false);
+			console.info('🚩 Listbox.close');
+
+			this.isOpen = false;
 			this.rootElement.style.display = 'none';
-			this.combobox.rootElement.setAttribute('aria-expanded', 'false');
-			this.combobox.setActiveDescendant(false);
+
+			this.setCurrentOptionStyle(false);
+
+			this.emit('Listbox.close');
 		}
+	}
+
+	destroy() {
+		console.debug('🗑️ Listbox.destroy');
+		this.destroyEvents();
+	}
+
+	destroyEvents() {
+		this.rootElement.removeEventListener('mouseover', this.handleMouseover);
+		this.rootElement.removeEventListener('mouseout', this.handleMouseout);
 	}
 }
 

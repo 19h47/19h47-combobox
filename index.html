@@ -39,11 +39,12 @@
 			</div>
 			<div class="row">
 				<div class="col-12">
-					<label for="input"> State </label>
-					<div class="js-combobox">
-						<div class="input-group my-3">
+					<div class="border p-3">
+						<label class="h3 mb-3 d-block" for="combobox"> State </label>
+
+						<div class="input-group mt-3">
 							<input
-								id="input"
+								id="combobox"
 								class="form-control"
 								type="text"
 								role="combobox"
@@ -65,7 +66,7 @@
 
 						<ul
 							id="listbox"
-							class="list-group"
+							class="list-group mt-3"
 							role="listbox"
 							aria-label="States"
 							style="display: none"
@@ -472,23 +473,21 @@
 		<script src="main.js"></script>
 		<script>
 			window.addEventListener('load', () => {
-				const comboboxes = [...document.querySelectorAll('.js-combobox')];
+				const $combobox = document.querySelector('[role="combobox"]');
+				const $button = document.querySelector('.js-button');
+				const $listbox = document.querySelector('[role="listbox"]');
 
-				comboboxes.forEach($combobox => {
-					const $button = $combobox.querySelector('.js-button');
-					var combobox = new Combobox.default($combobox);
+				const combobox = new Combobox.default($combobox, $listbox);
+				combobox.init();
 
-					combobox.init();
-
-					$button.addEventListener('click', () => {
-						if (combobox.listbox.isOpen()) {
-							combobox.listbox.close(true);
-						} else {
-							combobox.listbox.open();
-						}
-						combobox.rootElement.focus();
-						combobox.setVisualFocusTextbox();
-					});
+				$button.addEventListener('click', () => {
+					if (combobox.listbox.isOpen) {
+						combobox.listbox.close(true);
+					} else {
+						combobox.listbox.open();
+					}
+					combobox.rootElement.focus();
+					combobox.setVisualFocusTextbox();
 				});
 			});
 		</script>
