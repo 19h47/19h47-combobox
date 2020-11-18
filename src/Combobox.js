@@ -1,357 +1,268 @@
-import Listbox from '@/Listbox';
-import {
-	BACKSPACE,
-	TAB,
-	ENTER,
-	ESCAPE,
-	END,
-	HOME,
-	ARROW_LEFT,
-	ARROW_UP,
-	ARROW_RIGHT,
-	ARROW_DOWN,
-} from '@19h47/keycode';
+// import Listbox from '@/Listbox';
+import { EventEmitter } from 'events';
+import { TAB, ENTER, ESCAPE, ARROW_UP, ARROW_DOWN } from '@19h47/keycode';
 
-const isPrintableCharacter = string => 1 === string.length && string.match(/\S/);
+import Props from '@/Props';
+import isPromise from '@/utils/isPromise';
 
-class Combobox {
+const BASE_CLASS = 'Combobox';
+
+class Combobox extends EventEmitter {
 	/**
 	 *
-	 * @param {Object} $combobox
+	 * @param {Object} $input
 	 * @param {*} $listbox
 	 */
-	constructor($combobox, $listbox) {
-		this.rootElement = $combobox;
-		this.$listbox = $listbox;
-		this.option = false;
+	constructor(
+		$input,
+		$listbox,
+		{ search, autoselect = false, getResultValue = result => result },
+	) {
+		super();
 
-		this.hasFocus = false;
-		this.hasHover = false;
-		this.filter = '';
-		this.isNone = false;
-		this.isList = false;
-		this.isBoth = false;
+		this.$input = $input;
+		this.$listbox = $listbox;
+
+		this.selectedIndex = -1;
+		this.results = [];
+		this.value = '';
+
+		this.search = isPromise(search) ? search : value => Promise.resolve(search(value));
+		this.getResultValue = getResultValue;
+
+		// this.autocomplete = this.$input.getAttribute('aria-autocomplete'); @TODO use setSelectionRange
+		this.autoselect = autoselect;
+
+		this.handleKeydown = this.handleKeydown.bind(this);
+		this.handleInput = this.handleInput.bind(this);
+		this.handleClick = this.handleClick.bind(this);
+		this.handleFocus = this.handleFocus.bind(this);
+		this.handleBlur = this.handleBlur.bind(this);
+		this.handleMousedown = this.handleMousedown.bind(this);
+		this.handleDocumentClick = this.handleDocumentClick.bind(this);
+
+		this.select = this.select.bind(this);
 	}
 
 	init() {
-		this.rootElement.setAttribute('aria-haspopup', true);
-
-		let autocomplete = this.rootElement.getAttribute('aria-autocomplete');
-
-		if ('string' === typeof autocomplete) {
-			autocomplete = autocomplete.toLowerCase();
-			this.isNone = 'none' === autocomplete;
-			this.isList = 'list' === autocomplete;
-			this.isBoth = 'both' === autocomplete;
-		} else {
-			// default value of autocomplete
-			this.isNone = true;
-		}
-
-		this.listbox = new Listbox(this.$listbox, this);
-		this.listbox.init();
-
+		this.update();
 		this.initEvents();
 	}
 
 	initEvents() {
-		this.rootElement.addEventListener('keydown', this.handleKeydown.bind(this));
-		this.rootElement.addEventListener('keyup', this.handleKeyup.bind(this));
-		this.rootElement.addEventListener('click', this.handleClick.bind(this));
-		this.rootElement.addEventListener('is-focus', this.handleFocus.bind(this));
-		this.rootElement.addEventListener('blur', this.handleBlur.bind(this));
+		// console.info('🚩 Combobox.initEvents');
 
-		this.listbox.on('Listbox.setoption', ({ option }) => {
-			this.setOption(option);
-			this.setValue(option.textContent);
-		});
+		document.body.addEventListener('click', this.handleDocumentClick);
 
-		this.listbox.on('Listbox.open', () => {
-			this.rootElement.setAttribute('aria-expanded', true);
-		});
+		this.$input.addEventListener('keydown', this.handleKeydown);
+		this.$input.addEventListener('input', this.handleInput);
+		this.$input.addEventListener('focus', this.handleFocus);
+		this.$input.addEventListener('blur', this.handleBlur);
 
-		this.listbox.on('Listbox.close', () => {
-			this.rootElement.setAttribute('aria-expanded', false);
-			this.setActiveDescendant();
-		});
+		this.$listbox.addEventListener('mousedown', this.handleMousedown);
+		this.$listbox.addEventListener('click', this.handleClick);
+	}
+
+	handleDocumentClick({ target }) {
+		if (this.$input.contains(target)) {
+			return;
+		}
+
+		if (this.$listbox.contains(target)) {
+			return;
+		}
+		this.hideListbox();
+	}
+
+	// eslint-disable-next-line class-methods-use-this
+	handleMousedown(event) {
+		event.preventDefault();
 	}
 
 	handleKeydown(event) {
-		const { altKey, keyCode: key } = event;
+		const { keyCode: key } = event;
+
+		const previous = () => {
+			this.selectedIndex =
+				0 > this.selectedIndex - 1 ? this.results.length - 1 : this.selectedIndex - 1;
+
+			event.preventDefault();
+			this.handleUpdate(this.results, this.selectedIndex);
+		};
+
+		const next = () => {
+			this.selectedIndex =
+				this.selectedIndex + 1 > this.results.length - 1 ? 0 : this.selectedIndex + 1;
+
+			event.preventDefault();
+			this.handleUpdate(this.results, this.selectedIndex);
+		};
 
 		const codes = {
 			[ENTER]: () => {
-				if ((this.listbox.focus || this.isBoth) && this.option) {
-					this.setValue(this.option.textContent);
-				}
+				this.select();
 
-				this.listbox.close(true);
-
-				event.stopPropagation();
-				event.preventDefault();
+				this.emit('Combobox.onsubmit', {
+					selectedResult: this.results[this.selectedIndex],
+				});
 			},
-			[ARROW_DOWN]: () => {
-				if (this.listbox.options.length) {
-					if (this.listbox.focus || (this.isBoth && this.option)) {
-						this.setOption(this.listbox.getNextItem(this.option), true);
-					} else {
-						this.listbox.open();
-						if (!altKey) {
-							this.setOption(this.listbox.getFirstItem(), true);
-						}
-					}
-					this.setVisualFocusListbox();
-				}
-
-				event.stopPropagation();
-				event.preventDefault();
-			},
-			[ARROW_UP]: () => {
-				if (this.listbox.options.length) {
-					if (this.listbox.focus || (this.isBoth && this.option)) {
-						this.setOption(this.listbox.getPreviousItem(this.option), true);
-					} else {
-						this.listbox.open();
-						if (!altKey) {
-							this.setOption(this.listbox.getLastItem(), true);
-						}
-					}
-					this.setVisualFocusListbox();
-				}
-
-				event.stopPropagation();
-				event.preventDefault();
-			},
+			[ARROW_DOWN]: next,
+			[ARROW_UP]: previous,
 			[ESCAPE]: () => {
-				this.listbox.close(true);
-				this.setVisualFocusTextbox();
-				this.setValue('');
-				this.option = false;
+				this.hideListbox();
+				this.setValue();
 			},
-			[TAB]: () => {
-				this.listbox.close(true);
-
-				if (this.listbox.focus) {
-					if (this.option) {
-						this.setValue(this.option.textContent);
-					}
-				}
-			},
+			[TAB]: this.select,
 			default: () => false,
 		};
 
 		return (codes[key] || codes.default)();
 	}
 
-	handleKeyup(event) {
-		let option = false;
+	handleInput({ target: { value } }) {
+		// console.info('🚩 Combobox.handleInput');
 
-		const { keyCode, key } = event;
+		this.updateListbox(value);
+		this.value = value;
+	}
 
-		if (isPrintableCharacter(key)) {
-			this.filter += key;
-		}
+	handleClick({ target }) {
+		console.info('🚩 Combobox.handleClick');
 
-		// this is for the case when a selection in the textbox has been deleted
-		if (this.rootElement.value.length < this.filter.length) {
-			this.filter = this.rootElement.value;
-			this.option = false;
-		}
+		const result = target.closest('[data-result-index]');
 
-		switch (keyCode) {
-			case ESCAPE:
-				return;
-			case BACKSPACE:
-				this.setValue(this.rootElement.value);
-				this.setVisualFocusTextbox();
+		if (result) {
+			this.selectedIndex = parseInt(result.getAttribute('data-result-index'), 10);
 
-				this.listbox.setCurrentOptionStyle(false);
-				this.option = false;
+			this.select();
 
-				event.stopPropagation();
-				event.preventDefault();
-
-				break;
-
-			case ARROW_LEFT:
-			case ARROW_RIGHT:
-			case HOME:
-			case END:
-				if (this.isBoth) {
-					this.filter = this.rootElement.value;
-				} else {
-					this.option = false;
-					this.listbox.setCurrentOptionStyle(false);
-				}
-
-				this.setVisualFocusTextbox();
-				event.stopPropagation();
-				event.preventDefault();
-				break;
-
-			default:
-				if (isPrintableCharacter(key)) {
-					this.setVisualFocusTextbox();
-					this.listbox.setCurrentOptionStyle(false);
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					if (this.isList || this.isBoth) {
-						option = this.listbox.filter(this.filter, this.option);
-
-						if (option) {
-							if (!this.listbox.isOpen && this.rootElement.value.length) {
-								this.listbox.open();
-							}
-
-							if (
-								0 ===
-								option.textComparison.indexOf(this.rootElement.value.toLowerCase())
-							) {
-								this.option = option;
-								if (this.isBoth || this.listbox.focus) {
-									this.listbox.setCurrentOptionStyle(option);
-									if (this.isBoth && isPrintableCharacter(key)) {
-										this.setOption(option);
-									}
-								}
-							} else {
-								this.option = false;
-								this.listbox.setCurrentOptionStyle(false);
-							}
-						} else {
-							this.listbox.close();
-							this.option = false;
-							this.setActiveDescendant();
-						}
-					} else if (this.rootElement.value.length) {
-						this.listbox.open();
-					}
-				}
-
-				break;
-		}
-
-		if (keyCode !== ENTER) {
-			if (this.isList || this.isBoth) {
-				option = this.listbox.filter(this.filter, this.option);
-
-				if (option) {
-					if (!this.listbox.isOpen && this.rootElement.value.length) {
-						this.listbox.open();
-					}
-
-					if (0 === option.textComparison.indexOf(this.rootElement.value.toLowerCase())) {
-						this.option = option;
-
-						if (this.isBoth || this.listbox.focus) {
-							this.listbox.setCurrentOptionStyle(option);
-
-							if (this.isBoth && isPrintableCharacter(key)) {
-								this.setOption(option);
-							}
-						}
-					} else {
-						this.option = false;
-						this.listbox.setCurrentOptionStyle(false);
-					}
-				} else {
-					this.listbox.close();
-					this.option = false;
-					this.setActiveDescendant();
-				}
-			} else if (this.rootElement.value.length) {
-				this.listbox.open();
-			}
+			this.emit('Combobox.onsubmit', { selectedResult: this.results[this.selectedIndex] });
 		}
 	}
 
-	handleClick() {
-		if (this.listbox.isOpen) {
-			return this.listbox.close(true);
-		}
+	handleFocus({ target: { value } }) {
+		// console.info('🚩 Combobox.handleFocus');
 
-		return this.listbox.open();
-	}
-
-	handleFocus() {
-		this.setVisualFocusTextbox();
-		this.option = false;
-		this.listbox.setCurrentOptionStyle(null);
+		this.updateListbox(value);
+		this.value = value;
 	}
 
 	handleBlur() {
-		this.listbox.focus = false;
-		this.listbox.setCurrentOptionStyle(null);
-		this.removeVisualFocusAll();
-		setTimeout(this.listbox.close.bind(this.listbox, false), 300);
+		// console.info('🚩 Combobox.handleBlur');
+
+		this.hideListbox();
 	}
 
-	setActiveDescendant(option = false) {
-		this.rootElement.removeAttribute('aria-activedescendant');
+	handleUpdate(results, selectedIndex) {
+		// console.log('🚩 Combobox.handleUpdate', selectedIndex);
 
-		if (option && this.listbox.focus) {
-			this.rootElement.setAttribute('aria-activedescendant', option.rootElement.id);
-		}
+		this.$listbox.innerHTML = '';
+
+		results.forEach((result, index) => {
+			const props = new Props(index, selectedIndex, BASE_CLASS);
+			const resultHTML = this.renderResult(result, props);
+
+			this.$listbox.insertAdjacentHTML('beforeend', resultHTML);
+		});
+
+		this.$input.setAttribute(
+			'aria-activedescendant',
+			-1 < selectedIndex ? `${BASE_CLASS}-result-${selectedIndex}` : '',
+		);
+
+		this.emit('Combobox.onupdate', { results, selectedIndex });
+	}
+
+	handleLoading() {
+		this.loading = true;
+		this.update();
+	}
+
+	handleLoaded() {
+		this.loading = false;
+		this.update();
 	}
 
 	setValue(value) {
-		this.filter = value;
-		this.rootElement.value = this.filter;
-		this.rootElement.setSelectionRange(this.filter.length, this.filter.length);
-
-		if (this.isList || this.isBoth) {
-			this.listbox.filter(this.filter, this.option);
-		}
+		this.$input.value = value;
 	}
 
-	setOption(option, flag = false) {
-		this.option = option;
-		this.listbox.setCurrentOptionStyle(this.option);
-		this.setActiveDescendant(this.option);
+	select() {
+		// console.info('🚩 Combobox.select', this.selectedIndex);
 
-		if (this.isBoth) {
-			this.rootElement.value = this.option.textContent;
+		const result = this.results[this.selectedIndex];
 
-			if (flag) {
-				this.rootElement.setSelectionRange(
-					this.option.textContent.length,
-					this.option.textContent.length,
-				);
-			} else {
-				this.rootElement.setSelectionRange(
-					this.filter.length,
-					this.option.textContent.length,
-				);
+		if (result) {
+			this.setValue(result);
+		}
+
+		this.hideListbox();
+	}
+
+	updateListbox(value) {
+		this.emit('Combobox.onloading');
+
+		this.search(value).then(results => {
+			this.results = results;
+
+			this.emit('Combobox.onloaded');
+
+			if (0 === this.results.length) {
+				this.hideListbox();
+				return;
 			}
+
+			this.selectedIndex = this.autoselect ? 0 : -1;
+
+			this.handleUpdate(this.results, this.selectedIndex);
+
+			this.showListbox();
+		});
+	}
+
+	showListbox() {
+		this.$input.setAttribute('aria-expanded', true);
+
+		this.show();
+	}
+
+	hideListbox() {
+		// console.info('🚩 Combobox.hideListbox', this.selectedIndex);
+
+		const selectedResult = this.results[this.selectedIndex];
+
+		if (this.autoselect && selectedResult) {
+			this.setValue(selectedResult);
 		}
+
+		this.selectedIndex = -1;
+		this.results = [];
+
+		this.$input.setAttribute('aria-expanded', false);
+		this.$input.setAttribute('aria-activedescendant', '');
+
+		this.handleUpdate(this.results, this.selectedIndex);
+
+		this.hide();
 	}
 
-	setVisualFocusTextbox() {
-		this.listbox.rootElement.classList.remove('is-focus');
-		this.listbox.focus = false;
-		this.rootElement.parentNode.classList.add('is-focus');
-		this.hasFocus = true;
-		this.setActiveDescendant();
+	renderResult(result, props) {
+		return `<li ${props}>${this.getResultValue(result)}</li>`;
 	}
 
-	setVisualFocusListbox() {
-		this.rootElement.parentNode.classList.remove('is-focus');
-		this.hasFocus = false;
-		this.listbox.rootElement.classList.add('is-focus');
-		this.listbox.focus = true;
-
-		this.setActiveDescendant(this.option);
+	show() {
+		this.expanded = true;
+		this.update();
 	}
 
-	removeVisualFocusAll() {
-		this.rootElement.parentNode.classList.remove('is-focus');
-		this.hasFocus = false;
-		this.listbox.rootElement.classList.remove('is-focus');
-		this.listbox.focus = true;
-		this.option = false;
-		this.setActiveDescendant();
+	hide() {
+		this.expanded = false;
+		this.update();
+	}
+
+	// eslint-disable-next-line class-methods-use-this
+	update() {
+		// console.info('🚩 Combobox.update');
 	}
 }
 

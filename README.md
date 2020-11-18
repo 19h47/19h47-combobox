@@ -1,11 +1,15 @@
 # @19h47/combobox
 
-## Events
+## Instance options
 
-| Event            | Arguments | Description |
-| ---------------- | --------- | ----------- |
-| Option.mouseout  |           |             |
-| Option.mouseover |           |             |
+## nstance events
+
+| Event              | Arguments | Description                           |
+| ------------------ | --------- | ------------------------------------- |
+| Combobox.onloading |           |                                       |
+| Combobox.onloaded  |           |                                       |
+| Combobox.onsubmit  |           |                                       |
+| Combobox.onupdate  | `obj`     | Returns `results` and `selectedIndex` |
 
 ## Acknowledgments
 
