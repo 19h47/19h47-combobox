@@ -31,6 +31,7 @@ class Listbox extends EventEmitter {
 		// Bind.
 		this.handleMouseover = this.handleMouseover.bind(this);
 		this.handleMouseout = this.handleMouseout.bind(this);
+		this.handleMouseDown = this.handleMouseDown.bind(this);
 		this.close = this.close.bind(this);
 	}
 
@@ -57,61 +58,56 @@ class Listbox extends EventEmitter {
 				this.open();
 			});
 
-			option.on('Option.click', ({ option: element }) => {
-				this.setOption(element);
+			option.on('Option.click', opt => {
+				this.setOption(opt);
 				this.close(true);
+
+				this.emit('Listbox.click', opt);
 			});
 		});
 
-		this.filterOptions('');
+		this.filter('');
 		this.initEvents();
 	}
 
 	initEvents() {
 		this.rootElement.addEventListener('mouseover', this.handleMouseover);
 		this.rootElement.addEventListener('mouseout', this.handleMouseout);
+		this.rootElement.addEventListener('mousedown', this.handleMouseDown);
 	}
 
-	filterOptions(filter = '', currentOption) {
-		let option = null;
-		let textContent = null;
-		let numItems = 0;
+	// eslint-disable-next-line class-methods-use-this
+	handleMouseDown(event) {
+		event.preventDefault();
+	}
 
-		filter = filter.toLowerCase(); // eslint-disable-line no-param-reassign
+	filter(filter = '', currentOption) {
+		// let option = null;
 
 		this.options = [];
-		this.firstChars = [];
 		this.rootElement.innerHTML = '';
 
-		for (let i = 0; i < this.allOptions.length; i += 1) {
-			option = this.allOptions[i];
-			if (0 === filter.length || 0 === option.textComparison.indexOf(filter)) {
-				this.options.push(option);
-				textContent = option.textContent.trim();
-				this.firstChars.push(textContent.substring(0, 1).toLowerCase());
-				this.rootElement.appendChild(option.rootElement);
-			}
-		}
+		this.options = this.allOptions.filter(option => {
+			return option.textComparison.toLowerCase().startsWith(filter.toLowerCase());
+		});
 
-		// Use populated.options array to initialize firstOption and lastOption.
-		numItems = this.options.length;
+		this.options.forEach(option => this.rootElement.appendChild(option.rootElement));
 
-		if (0 < numItems) {
+		if (0 < this.options.length) {
 			[this.firstOption] = this.options;
-			this.lastOption = this.options[numItems - 1];
+			this.lastOption = this.options[this.options.length - 1];
 
 			if (currentOption && 0 <= this.options.indexOf(currentOption)) {
-				option = currentOption;
-			} else {
-				option = this.firstOption;
+				return currentOption;
 			}
-		} else {
-			this.firstOption = false;
-			option = false;
-			this.lastOption = false;
+
+			return this.firstOption;
 		}
 
-		return option;
+		this.firstOption = false;
+		this.lastOption = false;
+
+		return false;
 	}
 
 	setCurrentOptionStyle(option) {
@@ -119,9 +115,11 @@ class Listbox extends EventEmitter {
 			if ($option === option) {
 				$option.rootElement.setAttribute('aria-selected', true);
 				this.rootElement.scrollTop = $option.rootElement.offsetTop;
-			} else {
-				$option.rootElement.removeAttribute('aria-selected');
+
+				return;
 			}
+
+			$option.rootElement.removeAttribute('aria-selected');
 		});
 	}
 

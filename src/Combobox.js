@@ -93,11 +93,11 @@ class Combobox {
 			[ARROW_DOWN]: () => {
 				if (this.listbox.options.length) {
 					if (this.listbox.focus || (this.isBoth && this.option)) {
-						this.setOption(this.listbox.getNextItem(this.option));
+						this.setOption(this.listbox.getNextItem(this.option), true);
 					} else {
 						this.listbox.open();
 						if (!altKey) {
-							this.setOption(this.listbox.getFirstItem());
+							this.setOption(this.listbox.getFirstItem(), true);
 						}
 					}
 					this.setVisualFocusListbox();
@@ -109,11 +109,11 @@ class Combobox {
 			[ARROW_UP]: () => {
 				if (this.listbox.options.length) {
 					if (this.listbox.focus || (this.isBoth && this.option)) {
-						this.setOption(this.listbox.getPreviousItem(this.option));
+						this.setOption(this.listbox.getPreviousItem(this.option), true);
 					} else {
 						this.listbox.open();
 						if (!altKey) {
-							this.setOption(this.listbox.getLastItem());
+							this.setOption(this.listbox.getLastItem(), true);
 						}
 					}
 					this.setVisualFocusListbox();
@@ -198,7 +198,7 @@ class Combobox {
 					event.preventDefault();
 
 					if (this.isList || this.isBoth) {
-						option = this.listbox.filterOptions(this.filter, this.option);
+						option = this.listbox.filter(this.filter, this.option);
 
 						if (option) {
 							if (!this.listbox.isOpen && this.rootElement.value.length) {
@@ -235,7 +235,7 @@ class Combobox {
 
 		if (keyCode !== ENTER) {
 			if (this.isList || this.isBoth) {
-				option = this.listbox.filterOptions(this.filter, this.option);
+				option = this.listbox.filter(this.filter, this.option);
 
 				if (option) {
 					if (!this.listbox.isOpen && this.rootElement.value.length) {
@@ -299,19 +299,32 @@ class Combobox {
 	setValue(value) {
 		this.filter = value;
 		this.rootElement.value = this.filter;
+		this.rootElement.setSelectionRange(this.filter.length, this.filter.length);
 
 		if (this.isList || this.isBoth) {
-			this.listbox.filterOptions(this.filter, this.option);
+			this.listbox.filter(this.filter, this.option);
 		}
 	}
 
-	setOption(option) {
+	setOption(option, flag = false) {
 		this.option = option;
 		this.listbox.setCurrentOptionStyle(this.option);
 		this.setActiveDescendant(this.option);
 
 		if (this.isBoth) {
 			this.rootElement.value = this.option.textContent;
+
+			if (flag) {
+				this.rootElement.setSelectionRange(
+					this.option.textContent.length,
+					this.option.textContent.length,
+				);
+			} else {
+				this.rootElement.setSelectionRange(
+					this.filter.length,
+					this.option.textContent.length,
+				);
+			}
 		}
 	}
 

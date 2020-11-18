@@ -27,7 +27,7 @@
 			}
 
 			ul[role='listbox'] {
-				display: none;
+				/* display: none; */
 			}
 
 			ul[role='listbox'].is-active {
@@ -56,20 +56,12 @@
 								class="form-control"
 								type="text"
 								role="combobox"
-								aria-autocomplete="list"
+								aria-autocomplete="both"
 								aria-expanded="false"
 								aria-controls="listbox"
 								aria-haspopup="true"
+								placeholder="State"
 							/>
-							<div class="input-group-append">
-								<button
-									class="btn btn-secondary dropdown-toggle js-button"
-									type="button"
-									aria-label="Open"
-								>
-									Open
-								</button>
-							</div>
 						</div>
 
 						<ul
@@ -83,6 +75,7 @@
 								class="list-group-item list-group-item-action"
 								id="alabama"
 								role="option"
+								data-index="0"
 							>
 								Alabama
 							</li>
@@ -90,6 +83,7 @@
 								class="list-group-item list-group-item-action"
 								id="alaska"
 								role="option"
+								data-index="1"
 							>
 								Alaska
 							</li>
@@ -97,6 +91,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-as"
 								role="option"
+								data-index="2"
 							>
 								American Samoa
 							</li>
@@ -104,6 +99,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-az"
 								role="option"
+								data-index="3"
 							>
 								Arizona
 							</li>
@@ -111,6 +107,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ar"
 								role="option"
+								data-index="4"
 							>
 								Arkansas
 							</li>
@@ -118,6 +115,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ca"
 								role="option"
+								data-index="5"
 							>
 								California
 							</li>
@@ -125,6 +123,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-co"
 								role="option"
+								data-index="6"
 							>
 								Colorado
 							</li>
@@ -132,6 +131,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ct"
 								role="option"
+								data-index="7"
 							>
 								Connecticut
 							</li>
@@ -139,6 +139,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-de"
 								role="option"
+								data-index="8"
 							>
 								Delaware
 							</li>
@@ -146,6 +147,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-dc"
 								role="option"
+								data-index="9"
 							>
 								District of Columbia
 							</li>
@@ -153,6 +155,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-fl"
 								role="option"
+								data-index="10"
 							>
 								Florida
 							</li>
@@ -160,6 +163,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ga"
 								role="option"
+								data-index="11"
 							>
 								Georgia
 							</li>
@@ -167,6 +171,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-gm"
 								role="option"
+								data-index="12"
 							>
 								Guam
 							</li>
@@ -174,6 +179,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-hi"
 								role="option"
+								data-index="13"
 							>
 								Hawaii
 							</li>
@@ -181,6 +187,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-id"
 								role="option"
+								data-index="14"
 							>
 								Idaho
 							</li>
@@ -188,6 +195,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-il"
 								role="option"
+								data-index="15"
 							>
 								Illinois
 							</li>
@@ -195,6 +203,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-in"
 								role="option"
+								data-index="16"
 							>
 								Indiana
 							</li>
@@ -202,6 +211,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ia"
 								role="option"
+								data-index="17"
 							>
 								Iowa
 							</li>
@@ -209,6 +219,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ks"
 								role="option"
+								data-index="18"
 							>
 								Kansas
 							</li>
@@ -216,6 +227,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ky"
 								role="option"
+								data-index="19"
 							>
 								Kentucky
 							</li>
@@ -223,6 +235,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-la"
 								role="option"
+								data-index="20"
 							>
 								Louisiana
 							</li>
@@ -230,6 +243,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-me"
 								role="option"
+								data-index="21"
 							>
 								Maine
 							</li>
@@ -237,6 +251,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-md"
 								role="option"
+								data-index="22"
 							>
 								Maryland
 							</li>
@@ -244,6 +259,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ma"
 								role="option"
+								data-index="23"
 							>
 								Massachusetts
 							</li>
@@ -251,6 +267,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-mi"
 								role="option"
+								data-index="24"
 							>
 								Michigan
 							</li>
@@ -258,6 +275,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-mn"
 								role="option"
+								data-index="25"
 							>
 								Minnesota
 							</li>
@@ -265,6 +283,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ms"
 								role="option"
+								data-index="26"
 							>
 								Mississippi
 							</li>
@@ -272,6 +291,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-mo"
 								role="option"
+								data-index="27"
 							>
 								Missouri
 							</li>
@@ -279,6 +299,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-mt"
 								role="option"
+								data-index="28"
 							>
 								Montana
 							</li>
@@ -286,6 +307,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ne"
 								role="option"
+								data-index="29"
 							>
 								Nebraska
 							</li>
@@ -293,6 +315,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-nv"
 								role="option"
+								data-index="30"
 							>
 								Nevada
 							</li>
@@ -300,6 +323,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-nh"
 								role="option"
+								data-index="31"
 							>
 								New Hampshire
 							</li>
@@ -307,6 +331,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-nj"
 								role="option"
+								data-index="32"
 							>
 								New Jersey
 							</li>
@@ -314,6 +339,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-nm"
 								role="option"
+								data-index="33"
 							>
 								New Mexico
 							</li>
@@ -321,6 +347,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ny"
 								role="option"
+								data-index="34"
 							>
 								New York
 							</li>
@@ -328,6 +355,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-nc"
 								role="option"
+								data-index="35"
 							>
 								North Carolina
 							</li>
@@ -335,6 +363,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-nd"
 								role="option"
+								data-index="36"
 							>
 								North Dakota
 							</li>
@@ -342,6 +371,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-mp"
 								role="option"
+								data-index="37"
 							>
 								Northern Marianas Islands
 							</li>
@@ -349,6 +379,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-oh"
 								role="option"
+								data-index="38"
 							>
 								Ohio
 							</li>
@@ -356,6 +387,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ok"
 								role="option"
+								data-index="39"
 							>
 								Oklahoma
 							</li>
@@ -363,6 +395,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-or"
 								role="option"
+								data-index="40"
 							>
 								Oregon
 							</li>
@@ -370,6 +403,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-pa"
 								role="option"
+								data-index="41"
 							>
 								Pennsylvania
 							</li>
@@ -377,6 +411,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-pr"
 								role="option"
+								data-index="42"
 							>
 								Puerto Rico
 							</li>
@@ -384,6 +419,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ri"
 								role="option"
+								data-index="43"
 							>
 								Rhode Island
 							</li>
@@ -391,6 +427,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-sc"
 								role="option"
+								data-index="44"
 							>
 								South Carolina
 							</li>
@@ -398,6 +435,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-sd"
 								role="option"
+								data-index="45"
 							>
 								South Dakota
 							</li>
@@ -405,6 +443,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-tn"
 								role="option"
+								data-index="46"
 							>
 								Tennessee
 							</li>
@@ -412,6 +451,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-tx"
 								role="option"
+								data-index="47"
 							>
 								Texas
 							</li>
@@ -419,6 +459,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ut"
 								role="option"
+								data-index="48"
 							>
 								Utah
 							</li>
@@ -426,6 +467,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-ve"
 								role="option"
+								data-index="49"
 							>
 								Vermont
 							</li>
@@ -433,6 +475,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-va"
 								role="option"
+								data-index="50"
 							>
 								Virginia
 							</li>
@@ -440,6 +483,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-vi"
 								role="option"
+								data-index="51"
 							>
 								Virgin Islands
 							</li>
@@ -447,6 +491,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-wa"
 								role="option"
+								data-index="52"
 							>
 								Washington
 							</li>
@@ -454,6 +499,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-wv"
 								role="option"
+								data-index="53"
 							>
 								West Virginia
 							</li>
@@ -461,6 +507,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-wi"
 								role="option"
+								data-index="54"
 							>
 								Wisconsin
 							</li>
@@ -468,6 +515,7 @@
 								class="list-group-item list-group-item-action"
 								id="lb1-wy"
 								role="option"
+								data-index="55"
 							>
 								Wyoming
 							</li>
@@ -484,18 +532,70 @@
 				const $button = document.querySelector('.js-button');
 				const $listbox = document.querySelector('[role="listbox"]');
 
+				const states = [
+					'Alabama',
+					'Alaska',
+					'American Samoa',
+					'Arizona',
+					'Arkansas',
+					'California',
+					'Colorado',
+					'Connecticut',
+					'Delaware',
+					'District Of Columbia',
+					'Federated States Of Micronesia',
+					'Florida',
+					'Georgia',
+					'Guam',
+					'Hawaii',
+					'Idaho',
+					'Illinois',
+					'Indiana',
+					'Iowa',
+					'Kansas',
+					'Kentucky',
+					'Louisiana',
+					'Maine',
+					'Marshall Islands',
+					'Maryland',
+					'Massachusetts',
+					'Michigan',
+					'Minnesota',
+					'Mississippi',
+					'Missouri',
+					'Montana',
+					'Nebraska',
+					'Nevada',
+					'New Hampshire',
+					'New Jersey',
+					'New Mexico',
+					'New York',
+					'North Carolina',
+					'North Dakota',
+					'Northern Mariana Islands',
+					'Ohio',
+					'Oklahoma',
+					'Oregon',
+					'Palau',
+					'Pennsylvania',
+					'Puerto Rico',
+					'Rhode Island',
+					'South Carolina',
+					'South Dakota',
+					'Tennessee',
+					'Texas',
+					'Utah',
+					'Vermont',
+					'Virgin Islands',
+					'Virginia',
+					'Washington',
+					'West Virginia',
+					'Wisconsin',
+					'Wyoming',
+				];
+
 				const combobox = new Combobox.default($combobox, $listbox);
 				combobox.init();
-
-				$button.addEventListener('click', () => {
-					if (combobox.listbox.isOpen) {
-						combobox.listbox.close(true);
-					} else {
-						combobox.listbox.open();
-					}
-					combobox.rootElement.focus();
-					combobox.setVisualFocusTextbox();
-				});
 			});
 		</script>
 	</body>

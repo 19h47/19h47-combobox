@@ -35,7 +35,7 @@ class Option extends EventEmitter {
 	}
 
 	handleClick() {
-		this.emit('Option.click', { option: this });
+		this.emit('Option.click', this);
 	}
 
 	handleMouseover() {
