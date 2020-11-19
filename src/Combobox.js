@@ -16,7 +16,7 @@ class Combobox extends EventEmitter {
 	constructor(
 		$input,
 		$listbox,
-		{ search, autoselect = false, getResultValue = result => result },
+		{ search, autoselect = false, getResultValue = result => result, clear = true },
 	) {
 		super();
 
@@ -24,14 +24,19 @@ class Combobox extends EventEmitter {
 		this.$listbox = $listbox;
 
 		this.selectedIndex = -1;
-		this.results = [];
+		this.results = [...this.$listbox.querySelectorAll('[role="option"]')].map(option =>
+			option.textContent.trim(),
+		);
 		this.value = '';
 
-		this.search = isPromise(search) ? search : value => Promise.resolve(search(value));
-		this.getResultValue = getResultValue;
+		console.log(this.results);
 
-		// this.autocomplete = this.$input.getAttribute('aria-autocomplete'); @TODO use setSelectionRange
+		// Props
+		this.search = isPromise(search) ? search : value => Promise.resolve(search(value));
 		this.autoselect = autoselect;
+		this.getResultValue = getResultValue;
+		this.clear = clear; // Clear listbox or not, default set to true
+		// this.autocomplete = this.$input.getAttribute('aria-autocomplete'); @TODO use setSelectionRange
 
 		this.handleKeydown = this.handleKeydown.bind(this);
 		this.handleInput = this.handleInput.bind(this);
@@ -71,6 +76,7 @@ class Combobox extends EventEmitter {
 		if (this.$listbox.contains(target)) {
 			return;
 		}
+
 		this.hideListbox();
 	}
 
@@ -127,12 +133,13 @@ class Combobox extends EventEmitter {
 	}
 
 	handleClick({ target }) {
-		console.info('🚩 Combobox.handleClick');
+		// console.info('🚩 Combobox.handleClick');
 
 		const result = target.closest('[aria-posinset]');
 
 		if (result) {
 			this.selectedIndex = parseInt(result.getAttribute('aria-posinset') - 1, 10);
+			console.log(this.results[this.selectedIndex]);
 
 			this.select();
 
@@ -159,7 +166,7 @@ class Combobox extends EventEmitter {
 		this.$listbox.innerHTML = '';
 
 		results.forEach((result, index) => {
-			const props = new Props(index, selectedIndex, BASE_CLASS);
+			const props = new Props(index, selectedIndex, BASE_CLASS, results.length);
 			const resultHTML = this.renderResult(result, props);
 
 			this.$listbox.insertAdjacentHTML('beforeend', resultHTML);
@@ -235,11 +242,13 @@ class Combobox extends EventEmitter {
 			this.setValue(selectedResult);
 		}
 
-		this.selectedIndex = -1;
-		this.results = [];
+		if (this.clear) {
+			this.selectedIndex = -1;
+			this.results = [];
 
-		this.$input.setAttribute('aria-expanded', false);
-		this.$input.setAttribute('aria-activedescendant', '');
+			this.$input.setAttribute('aria-expanded', false);
+			this.$input.setAttribute('aria-activedescendant', '');
+		}
 
 		this.handleUpdate(this.results, this.selectedIndex);
 

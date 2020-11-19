@@ -1,6 +1,16 @@
 # @19h47/combobox
 
+## Combobox
+
+| Key          | Function |
+| ------------ | -------- |
+| `Down Arrow` |          |
+
 ## Instance options
+
+| Option  | Type      | Default | Description                    |
+| ------- | --------- | ------- | ------------------------------ |
+| `clear` | `boolean` | `true`  | Clear listbox on `hideListbox` |
 
 ## nstance events
 
