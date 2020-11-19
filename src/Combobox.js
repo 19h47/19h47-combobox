@@ -129,10 +129,10 @@ class Combobox extends EventEmitter {
 	handleClick({ target }) {
 		console.info('🚩 Combobox.handleClick');
 
-		const result = target.closest('[data-result-index]');
+		const result = target.closest('[aria-posinset]');
 
 		if (result) {
-			this.selectedIndex = parseInt(result.getAttribute('data-result-index'), 10);
+			this.selectedIndex = parseInt(result.getAttribute('aria-posinset') - 1, 10);
 
 			this.select();
 
