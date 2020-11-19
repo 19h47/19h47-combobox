@@ -56,7 +56,7 @@
 								class="form-control"
 								type="text"
 								role="combobox"
-								aria-autocomplete="both"
+								aria-autocomplete="list"
 								aria-expanded="false"
 								aria-controls="listbox"
 								autocomplete="off"
@@ -651,6 +651,7 @@
 				];
 
 				const combobox = new Combobox.default($combobox, $listbox, {
+					clear: false,
 					search: input => {
 						if (input.length < 1) {
 							return states;

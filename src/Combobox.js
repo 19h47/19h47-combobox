@@ -16,7 +16,12 @@ class Combobox extends EventEmitter {
 	constructor(
 		$input,
 		$listbox,
-		{ search, autoselect = false, getResultValue = result => result, clear = true },
+		{
+			search,
+			autoselect = false,
+			setValue = (input, value) => (input.value = value), // eslint-disable-line no-return-assign, no-param-reassign
+			getValue = result => result,
+		},
 	) {
 		super();
 
@@ -29,14 +34,14 @@ class Combobox extends EventEmitter {
 		);
 		this.value = '';
 
-		console.log(this.results);
-
 		// Props
 		this.search = isPromise(search) ? search : value => Promise.resolve(search(value));
 		this.autoselect = autoselect;
-		this.getResultValue = getResultValue;
-		this.clear = clear; // Clear listbox or not, default set to true
-		// this.autocomplete = this.$input.getAttribute('aria-autocomplete'); @TODO use setSelectionRange
+		// inline, list, both
+		this.autocomplete = this.$input.getAttribute('aria-autocomplete') || 'both'; // @TODO use setSelectionRange
+
+		this.getValue = getValue;
+		this.setValue = setValue;
 
 		this.handleKeydown = this.handleKeydown.bind(this);
 		this.handleInput = this.handleInput.bind(this);
@@ -57,15 +62,18 @@ class Combobox extends EventEmitter {
 	initEvents() {
 		// console.info('🚩 Combobox.initEvents');
 
-		document.body.addEventListener('click', this.handleDocumentClick);
-
-		this.$input.addEventListener('keydown', this.handleKeydown);
 		this.$input.addEventListener('input', this.handleInput);
-		this.$input.addEventListener('focus', this.handleFocus);
-		this.$input.addEventListener('blur', this.handleBlur);
 
-		this.$listbox.addEventListener('mousedown', this.handleMousedown);
-		this.$listbox.addEventListener('click', this.handleClick);
+		if ('inline' === this.autocomplete || 'both' === this.autocomplete) {
+			this.$input.addEventListener('focus', this.handleFocus);
+			this.$input.addEventListener('blur', this.handleBlur);
+
+			this.$listbox.addEventListener('mousedown', this.handleMousedown);
+			this.$input.addEventListener('keydown', this.handleKeydown);
+			this.$listbox.addEventListener('click', this.handleClick);
+
+			document.body.addEventListener('click', this.handleDocumentClick);
+		}
 	}
 
 	handleDocumentClick({ target }) {
@@ -116,7 +124,7 @@ class Combobox extends EventEmitter {
 			[ARROW_UP]: previous,
 			[ESCAPE]: () => {
 				this.hideListbox();
-				this.setValue();
+				this.setValue(this.$input, '');
 			},
 			[TAB]: this.select,
 			default: () => false,
@@ -190,17 +198,13 @@ class Combobox extends EventEmitter {
 		this.update();
 	}
 
-	setValue(value) {
-		this.$input.value = value;
-	}
-
 	select() {
 		// console.info('🚩 Combobox.select', this.selectedIndex);
 
 		const result = this.results[this.selectedIndex];
 
 		if (result) {
-			this.setValue(result);
+			this.setValue(this.$input, result);
 		}
 
 		this.hideListbox();
@@ -239,16 +243,14 @@ class Combobox extends EventEmitter {
 		const selectedResult = this.results[this.selectedIndex];
 
 		if (this.autoselect && selectedResult) {
-			this.setValue(selectedResult);
+			this.setValue(this.$input, selectedResult);
 		}
 
-		if (this.clear) {
-			this.selectedIndex = -1;
-			this.results = [];
+		this.selectedIndex = -1;
+		this.results = [];
 
-			this.$input.setAttribute('aria-expanded', false);
-			this.$input.setAttribute('aria-activedescendant', '');
-		}
+		this.$input.setAttribute('aria-expanded', false);
+		this.$input.setAttribute('aria-activedescendant', '');
 
 		this.handleUpdate(this.results, this.selectedIndex);
 
@@ -256,7 +258,7 @@ class Combobox extends EventEmitter {
 	}
 
 	renderResult(result, props) {
-		return `<li ${props}>${this.getResultValue(result)}</li>`;
+		return `<li ${props}>${this.getValue(result)}</li>`;
 	}
 
 	show() {
