@@ -89,5 +89,9 @@
 						}));
 					},
 				});
+
+				combobox.on('Combobox.onupdate', ({ results, selectedIndex, value }) =>
+					console.log({ results, selectedIndex, value }),
+				);
 				combobox.init();
 			});</script></body></html>

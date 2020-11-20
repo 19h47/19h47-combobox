@@ -185,7 +185,7 @@ class Combobox extends EventEmitter {
 			-1 < selectedIndex ? `${BASE_CLASS}-result-${selectedIndex}` : '',
 		);
 
-		this.emit('Combobox.onupdate', { results, selectedIndex });
+		this.emit('Combobox.onupdate', { results, selectedIndex, value: this.value });
 	}
 
 	handleLoading() {

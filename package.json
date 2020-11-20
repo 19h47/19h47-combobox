@@ -1,6 +1,6 @@
 {
 	"name": "@19h47/combobox",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "Combobox and Listbox",
 	"main": "dist/main.js",
 	"scripts": {
