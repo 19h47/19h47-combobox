@@ -20,7 +20,7 @@ class Combobox extends EventEmitter {
 			search,
 			autoselect = false,
 			setValue = (input, value) => (input.value = value), // eslint-disable-line no-return-assign, no-param-reassign
-			getValue = result => result,
+			getValue = (result, props) => `<li ${props}>${result}</li>`,
 		},
 	) {
 		super();
@@ -147,7 +147,7 @@ class Combobox extends EventEmitter {
 
 		if (result) {
 			this.selectedIndex = parseInt(result.getAttribute('aria-posinset') - 1, 10);
-			console.log(this.results[this.selectedIndex]);
+			// console.log(this.results[this.selectedIndex]);
 
 			this.select();
 
@@ -258,7 +258,7 @@ class Combobox extends EventEmitter {
 	}
 
 	renderResult(result, props) {
-		return `<li ${props}>${this.getValue(result)}</li>`;
+		return this.getValue(result, props);
 	}
 
 	show() {
